@@ -1,6 +1,6 @@
-# ESP Agent SDK
+# ESP Windows Reference Implementation
 
-A compliance scanning agent that executes ESP (Executable Security Policy) files to validate system configurations against security policies.
+A compliance scanning agent that executes ESP (Endpoint State Policy) files to validate system configurations against security policies.
 
 ## Quick Start
 
@@ -100,98 +100,15 @@ git clone https://github.com/scanset/Policy-Library.git
 
 ## Supported CTN Types
 
-| CTN Type | Description | Platform |
-|----------|-------------|----------|
-| `registry` | Windows Registry key/value validation | Windows |
-| `registry_subkeys` | Registry subkey enumeration and counting | Windows |
-| `file_metadata` | File permissions, ownership, attributes | All |
-| `file_content` | File content validation (contains, pattern match) | All |
-| `json_record` | Structured JSON file validation with path queries | All |
-| `tcp_listener` | TCP port listening validation | Linux |
-| `computed_values` | Validate RUN operation results (testing only) | All |
-
-### Registry CTN Types (Windows)
-
-#### `registry` - Value Validation
-
-| Field | Type | Operations | Description |
-|-------|------|------------|-------------|
-| `exists` | boolean | `=`, `!=` | Key/value existence |
-| `type` | string | `=`, `!=` | Registry type (`reg_sz`, `reg_dword`, etc.) |
-| `value` | string | `=`, `!=`, `contains`, `starts`, `ends`, `pattern_match` | String comparison |
-| `value_int` | int | `=`, `!=`, `>`, `<`, `>=`, `<=` | Integer comparison (DWORD/QWORD) |
-
-#### `registry_subkeys` - Subkey Enumeration
-
-| Field | Type | Operations | Description |
-|-------|------|------------|-------------|
-| `exists` | boolean | `=`, `!=` | Key existence |
-| `subkey_count` | int | `=`, `!=`, `>`, `<`, `>=`, `<=` | Number of child subkeys |
-| `subkeys` | string | `contains`, `not_contains` | Check for specific subkey name |
-
-### File System CTN Types (All Platforms)
-
-#### `file_metadata` - Fast Metadata Collection
-
-##### Portable Fields (All Platforms)
-
-| Field | Type | Operations | Description |
-|-------|------|------------|-------------|
-| `exists` | boolean | `=`, `!=` | File exists |
-| `readable` | boolean | `=`, `!=` | File is readable |
-| `writable` | boolean | `=`, `!=` | File is writable |
-| `size` | int | `=`, `!=`, `>`, `<`, `>=`, `<=` | File size in bytes |
-| `is_directory` | boolean | `=`, `!=` | Path is a directory |
-| `owner_id` | string | `=`, `!=` | Owner (UID on Linux, SID on Windows) |
-| `group_id` | string | `=`, `!=` | Group (GID on Linux, SID on Windows) |
-
-##### Linux/macOS Only
-
-| Field | Type | Operations | Description |
-|-------|------|------------|-------------|
-| `permissions` | string | `=`, `!=` | Octal permissions (e.g., `0644`) |
-
-##### Windows Only
-
-| Field | Type | Operations | Description |
-|-------|------|------------|-------------|
-| `is_readonly` | boolean | `=`, `!=` | Read-only attribute |
-| `is_hidden` | boolean | `=`, `!=` | Hidden attribute |
-| `is_system` | boolean | `=`, `!=` | System file attribute |
-
-#### `file_content` - Content Validation
-
-| Field | Type | Operations | Description |
-|-------|------|------------|-------------|
-| `content` | string | `=`, `!=`, `contains`, `not_contains`, `starts`, `ends`, `pattern_match` | File content |
-
-**Behaviors:** `recursive_scan`, `include_hidden`, `binary_mode`, `follow_symlinks`
-
-### JSON Validation
-
-#### `json_record` - Structured JSON Validation
-
-Validates JSON files using field path queries:
-
-```esp
-STATE valid_config
-    record
-        field settings.enabled boolean = true
-        field database.port int = 5432
-        field users.*.role string = `admin` at_least_one
-    record_end
-STATE_END
-```
-
-**Path Syntax:** `field.nested.path`, `array.0.item`, `array.*.field`
-
-### Network CTN Types (Linux)
-
-#### `tcp_listener` - Port Listening Check
-
-| Field | Type | Operations | Description |
-|-------|------|------------|-------------|
-| `listening` | boolean | `=`, `!=` | Port is in LISTEN state |
+| CTN Type | Description | Platform | Reference |
+|----------|-------------|----------|-----------|
+| `registry` | Windows Registry key/value validation | Windows | [docs](contract_kit/docs/ctn_registry.md) |
+| `registry_subkeys` | Registry subkey enumeration and counting | Windows | [docs](contract_kit/docs/ctn_registry_subkeys.md) |
+| `file_metadata` | File permissions, ownership, attributes | All | [docs](contract_kit/docs/ctn_file_metadata.md) |
+| `file_content` | File content validation (contains, pattern match) | All | [docs](contract_kit/docs/ctn_file_content.md) |
+| `json_record` | Structured JSON file validation with path queries | All | [docs](contract_kit/docs/ctn_json_record.md) |
+| `tcp_listener` | TCP port listening validation | Linux | [docs](contract_kit/docs/ctn_tcp_listener.md) |
+| `computed_values` | Validate RUN operation results (testing only) | All | [docs](contract_kit/docs/ctn_computed_values.md) |
 
 ### Common Windows SIDs
 
