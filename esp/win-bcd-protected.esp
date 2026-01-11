@@ -1,0 +1,38 @@
+# -----------------------------------------------------------------------------
+# TEST 3: Boot Configuration Data Protection
+# BCD must be a system file and not writable
+# -----------------------------------------------------------------------------
+META
+    esp_id `win-bcd-protected`
+    version `1.0.0`
+    dsl_schema_version `1.0.0`
+    control_framework `CIS`
+    control `CIS-WIN-1.1.1`
+    control_mapping `CIS:WIN-1.1.1`
+    title `Boot Configuration Data must be protected`
+    description `The Boot Configuration Data (BCD) store contains boot parameters. Unauthorized modification could compromise system integrity or enable persistence mechanisms.`
+    platform `windows`
+    criticality `critical`
+    agent_type `endpoint`
+    tags `cis,windows,boot,bcd,integrity,security`
+META_END
+
+DEF
+    OBJECT bcd_store
+        path `C:\Boot\BCD`
+    OBJECT_END
+
+    STATE bcd_protected
+        exists boolean = true
+        writable boolean = false
+        is_system boolean = true
+    STATE_END
+
+    CRI AND
+        CTN file_metadata
+            TEST at_least_one all
+            STATE_REF bcd_protected
+            OBJECT_REF bcd_store
+        CTN_END
+    CRI_END
+DEF_END

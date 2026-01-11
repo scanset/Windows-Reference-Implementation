@@ -1,0 +1,38 @@
+# -----------------------------------------------------------------------------
+# TEST 6: Windows Defender Definitions Present
+# Verify antimalware definitions file exists and is not empty
+# -----------------------------------------------------------------------------
+META
+    esp_id `win-defender-definitions-present`
+    version `1.0.0`
+    dsl_schema_version `1.0.0`
+    control_framework `CIS`
+    control `CIS-WIN-8.1`
+    control_mapping `CIS:WIN-8.1`
+    title `Windows Defender definitions must be present`
+    description `Windows Defender requires up-to-date malware definitions to function effectively. The definitions database must exist and contain data.`
+    platform `windows`
+    criticality `high`
+    agent_type `endpoint`
+    tags `cis,windows,defender,antimalware,definitions`
+META_END
+
+DEF
+    OBJECT defender_definitions
+        path `C:\ProgramData\Microsoft\Windows Defender\Definition Updates\Backup\mpasbase.vdm`
+    OBJECT_END
+
+    STATE definitions_present
+        exists boolean = true
+        readable boolean = true
+        size int > `0`
+    STATE_END
+
+    CRI AND
+        CTN file_metadata
+            TEST at_least_one all
+            STATE_REF definitions_present
+            OBJECT_REF defender_definitions
+        CTN_END
+    CRI_END
+DEF_END

@@ -1,0 +1,48 @@
+# -----------------------------------------------------------------------------
+# TEST 7: PowerShell Profile Not Tampered
+# System PowerShell profile should not be writable by users
+# -----------------------------------------------------------------------------
+META
+    esp_id `win-powershell-profile-protected`
+    version `1.0.0`
+    dsl_schema_version `1.0.0`
+    control_framework `DISA-STIG`
+    control `SV-253500`
+    control_mapping `DISA-STIG:SV-253500`
+    title `PowerShell system profile must be protected`
+    description `The system-wide PowerShell profile executes for all users. If writable by non-administrators, it could be used for persistence or privilege escalation.`
+    platform `windows`
+    criticality `high`
+    agent_type `endpoint`
+    tags `stig,windows,powershell,profile,persistence,security`
+META_END
+
+DEF
+    OBJECT ps_profile
+        path `C:\Windows\System32\WindowsPowerShell\v1.0\profile.ps1`
+    OBJECT_END
+
+    STATE profile_protected
+        exists boolean = true
+        writable boolean = false
+        owner_id string = `S-1-5-18`
+    STATE_END
+
+    # Note: If profile doesn't exist, that's also acceptable (no persistence vector)
+    STATE profile_absent
+        exists boolean = false
+    STATE_END
+
+    CRI OR
+        CTN file_metadata
+            TEST at_least_one all
+            STATE_REF profile_protected
+            OBJECT_REF ps_profile
+        CTN_END
+        CTN file_metadata
+            TEST at_least_one all
+            STATE_REF profile_absent
+            OBJECT_REF ps_profile
+        CTN_END
+    CRI_END
+DEF_END

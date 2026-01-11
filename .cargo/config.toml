@@ -1,0 +1,48 @@
+# Cargo Configuration for ESP Agent SDK
+# NIST SP 800-218 SSDF Compliance
+# Cross-Compilation Support: Linux GNU, Linux musl, Windows GNU
+
+[build]
+incremental = true
+
+[env]
+RUST_BACKTRACE = "1"
+
+# =============================================================================
+# Cross-Compilation Targets
+# =============================================================================
+
+# Windows cross-compilation target (MinGW-w64)
+[target.x86_64-pc-windows-gnu]
+linker = "x86_64-w64-mingw32-gcc"
+ar = "x86_64-w64-mingw32-ar"
+
+# Linux musl cross-compilation target (static builds for RHEL, Alpine, etc.)
+[target.x86_64-unknown-linux-musl]
+linker = "musl-gcc"
+
+# Linux GNU target (explicit for cross-compilation scenarios)
+[target.x86_64-unknown-linux-gnu]
+linker = "gcc"
+
+# =============================================================================
+# Aliases for Common Build Commands
+# =============================================================================
+
+[alias]
+# Windows builds
+build-win = "build --target x86_64-pc-windows-gnu"
+build-win-release = "build --target x86_64-pc-windows-gnu --release"
+check-win = "check --target x86_64-pc-windows-gnu"
+clippy-win = "clippy --target x86_64-pc-windows-gnu"
+test-win = "test --target x86_64-pc-windows-gnu"
+
+# Linux musl builds (static)
+build-musl = "build --target x86_64-unknown-linux-musl"
+build-musl-release = "build --target x86_64-unknown-linux-musl --release"
+check-musl = "check --target x86_64-unknown-linux-musl"
+clippy-musl = "clippy --target x86_64-unknown-linux-musl"
+
+# Linux GNU builds
+build-linux = "build --target x86_64-unknown-linux-gnu"
+build-linux-release = "build --target x86_64-unknown-linux-gnu --release"

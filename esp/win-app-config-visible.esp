@@ -1,0 +1,38 @@
+# -----------------------------------------------------------------------------
+# TEST 9: Application Config Not Hidden
+# Application configuration should be visible (not hidden)
+# -----------------------------------------------------------------------------
+META
+    esp_id `win-app-config-visible`
+    version `1.0.0`
+    dsl_schema_version `1.0.0`
+    control_framework `CUSTOM`
+    control `APP-CONFIG-001`
+    control_mapping `CUSTOM:APP-CONFIG-001`
+    title `Application configuration must be visible`
+    description `Application configuration files should not be hidden, as this could indicate tampering or malicious modification.`
+    platform `windows`
+    criticality `low`
+    agent_type `endpoint`
+    tags `application,config,hidden,visibility`
+META_END
+
+DEF
+    OBJECT app_config
+        path `C:\ProgramData\MyApp\config.ini`
+    OBJECT_END
+
+    STATE config_visible
+        exists boolean = true
+        is_hidden boolean = false
+        readable boolean = true
+    STATE_END
+
+    CRI AND
+        CTN file_metadata
+            TEST at_least_one all
+            STATE_REF config_visible
+            OBJECT_REF app_config
+        CTN_END
+    CRI_END
+DEF_END

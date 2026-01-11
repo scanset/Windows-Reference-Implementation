@@ -1,0 +1,18 @@
+# Rust Toolchain Version Pinning
+# Implements: PO.3.2
+# Windows Cross-Compilation Support
+
+[toolchain]
+channel = "1.85.0"
+components = [
+    "clippy",
+    "rustfmt",
+    "rust-src",
+    "rust-analyzer",
+    "llvm-tools-preview",
+]
+targets = [
+    "x86_64-pc-windows-gnu",
+    "x86_64-unknown-linux-gnu",
+]
+profile = "default"

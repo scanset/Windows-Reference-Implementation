@@ -1,0 +1,35 @@
+[package]
+name = "agent"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "ESP Agent CLI"
+
+[dependencies]
+common = { workspace = true, features = [
+    "full-results",
+    "attestation",
+    "assessor-evidence",
+] }
+contract_kit.workspace = true
+serde_json.workspace = true
+
+# Signature and cryptography libraries
+p256 = { version = "0.13", features = ["ecdsa"] }
+rand_core = "0.6"
+hex = "0.4"
+log = "0.4"
+uuid = { version = "1", features = ["v4"] }
+sha2 = "0.10"
+base64 = "0.22"
+
+[target.'cfg(windows)'.dependencies]
+windows = { version = "0.58", features = ["Win32_Security_Cryptography"] }
+
+
+[[bin]]
+name = "esp_agent"
+path = "src/main.rs"

@@ -1,0 +1,41 @@
+# -----------------------------------------------------------------------------
+# TEST 5: Unauthorized Executable Detection
+# Check that no executables exist in temp directories
+# -----------------------------------------------------------------------------
+META
+    esp_id `win-no-temp-executables`
+    version `1.0.0`
+    dsl_schema_version `1.0.0`
+    control_framework `CUSTOM`
+    control `MALWARE-001`
+    control_mapping `CUSTOM:MALWARE-001`
+    title `No unauthorized executables in Windows Temp`
+    description `Malware often drops executables in the Windows Temp directory. This check verifies that specific known-bad files do not exist.`
+    platform `windows`
+    criticality `high`
+    agent_type `endpoint`
+    tags `malware,windows,temp,executable,detection`
+META_END
+
+DEF
+    OBJECT suspicious_file_1
+        path `C:\Windows\Temp\payload.exe`
+    OBJECT_END
+
+    OBJECT suspicious_file_2
+        path `C:\Windows\Temp\dropper.exe`
+    OBJECT_END
+
+    STATE must_not_exist
+        exists boolean = false
+    STATE_END
+
+    CRI AND
+        CTN file_metadata
+            TEST all all
+            STATE_REF must_not_exist
+            OBJECT_REF suspicious_file_1
+            OBJECT_REF suspicious_file_2
+        CTN_END
+    CRI_END
+DEF_END

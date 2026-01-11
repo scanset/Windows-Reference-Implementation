@@ -1,0 +1,38 @@
+# -----------------------------------------------------------------------------
+# TEST 10: Audit Log File Size Check
+# Windows Security event log must have sufficient size
+# -----------------------------------------------------------------------------
+META
+    esp_id `win-security-log-size`
+    version `1.0.0`
+    dsl_schema_version `1.0.0`
+    control_framework `DISA-STIG`
+    control `SV-253275`
+    control_mapping `DISA-STIG:SV-253275`
+    title `Security event log must have adequate size`
+    description `The Windows Security event log must be large enough to retain sufficient audit history. A minimum size ensures forensic data availability.`
+    platform `windows`
+    criticality `medium`
+    agent_type `endpoint`
+    tags `stig,windows,audit,eventlog,security,logging`
+META_END
+
+DEF
+    OBJECT security_log
+        path `C:\Windows\System32\winevt\Logs\Security.evtx`
+    OBJECT_END
+
+    # Minimum 20MB (20971520 bytes)
+    STATE log_adequate_size
+        exists boolean = true
+        size int >= `20971520`
+    STATE_END
+
+    CRI AND
+        CTN file_metadata
+            TEST at_least_one all
+            STATE_REF log_adequate_size
+            OBJECT_REF security_log
+        CTN_END
+    CRI_END
+DEF_END

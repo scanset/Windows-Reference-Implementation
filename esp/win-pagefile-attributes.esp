@@ -1,0 +1,38 @@
+# -----------------------------------------------------------------------------
+# TEST 4: Pagefile Security
+# Pagefile must exist and be a system/hidden file
+# -----------------------------------------------------------------------------
+META
+    esp_id `win-pagefile-attributes`
+    version `1.0.0`
+    dsl_schema_version `1.0.0`
+    control_framework `CIS`
+    control `CIS-WIN-2.3.1`
+    control_mapping `CIS:WIN-2.3.1`
+    title `Pagefile must have correct security attributes`
+    description `The Windows pagefile may contain sensitive data from memory. It should be marked as a system and hidden file to prevent casual access.`
+    platform `windows`
+    criticality `medium`
+    agent_type `endpoint`
+    tags `cis,windows,pagefile,memory,security`
+META_END
+
+DEF
+    OBJECT pagefile
+        path `C:\pagefile.sys`
+    OBJECT_END
+
+    STATE pagefile_secured
+        exists boolean = true
+        is_hidden boolean = true
+        is_system boolean = true
+    STATE_END
+
+    CRI AND
+        CTN file_metadata
+            TEST at_least_one all
+            STATE_REF pagefile_secured
+            OBJECT_REF pagefile
+        CTN_END
+    CRI_END
+DEF_END

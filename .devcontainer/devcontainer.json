@@ -1,0 +1,66 @@
+{
+    "name": "ESP Agent Development",
+    "build": {
+        "context": "..",
+        "dockerfile": "Dockerfile"
+    },
+    "workspaceFolder": "/workspace",
+    "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "rust-lang.rust-analyzer",
+                "vadimcn.vscode-lldb",
+                "serayuzgur.crates",
+                "tamasfe.even-better-toml",
+                "GitHub.vscode-github-actions",
+                "redhat.vscode-yaml",
+                "gruntfuggly.todo-tree",
+                "usernamehw.errorlens",
+                "eamodio.gitlens",
+                "yzhang.markdown-all-in-one",
+                "DavidAnson.vscode-markdownlint"
+            ],
+            "settings": {
+                "rust-analyzer.checkOnSave.command": "clippy",
+                "rust-analyzer.checkOnSave.extraArgs": [
+                    "--all-targets",
+                    "--all-features",
+                    "--",
+                    "-D", "warnings",
+                    "-D", "clippy::unwrap_used",
+                    "-D", "clippy::expect_used",
+                    "-D", "clippy::panic",
+                    "-D", "clippy::indexing_slicing"
+                ],
+                "rust-analyzer.cargo.autoreload": true,
+                "rust-analyzer.inlayHints.enable": true,
+                "files.watcherExclude": {
+                    "**/target/**": true,
+                    "**/.git/**": true
+                },
+                "search.exclude": {
+                    "**/target/**": true
+                },
+                "files.trimTrailingWhitespace": true,
+                "files.insertFinalNewline": true,
+                "files.trimFinalNewlines": true,
+                "editor.formatOnSave": true,
+                "[rust]": {
+                    "editor.defaultFormatter": "rust-lang.rust-analyzer",
+                    "editor.formatOnSave": true
+                },
+                "terminal.integrated.defaultProfile.linux": "bash"
+            }
+        }
+    },
+    "runArgs": [
+        "--cap-add=SYS_PTRACE",
+        "--security-opt",
+        "seccomp=unconfined"
+    ],
+    "containerEnv": {
+        "RUST_BACKTRACE": "1",
+        "RUST_LOG": "info"
+    }
+}

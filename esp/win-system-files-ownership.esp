@@ -1,0 +1,48 @@
+# -----------------------------------------------------------------------------
+# TEST 8: Critical System Files Ownership
+# Multiple system files must be owned by SYSTEM or Administrators
+# -----------------------------------------------------------------------------
+META
+    esp_id `win-system-files-ownership`
+    version `1.0.0`
+    dsl_schema_version `1.0.0`
+    control_framework `CIS`
+    control `CIS-WIN-5.2`
+    control_mapping `CIS:WIN-5.2`
+    title `Critical system files must have correct ownership`
+    description `Core Windows system files must be owned by SYSTEM or the Administrators group to prevent unauthorized modification.`
+    platform `windows`
+    criticality `critical`
+    agent_type `endpoint`
+    tags `cis,windows,ownership,system,kernel,security`
+META_END
+
+DEF
+    OBJECT ntoskrnl
+        path `C:\Windows\System32\ntoskrnl.exe`
+    OBJECT_END
+
+    OBJECT hal
+        path `C:\Windows\System32\hal.dll`
+    OBJECT_END
+
+    OBJECT win32k
+        path `C:\Windows\System32\win32k.sys`
+    OBJECT_END
+
+    # TrustedInstaller SID
+    STATE trusted_installer_owned
+        exists boolean = true
+        owner_id string = `S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464`
+    STATE_END
+
+    CRI AND
+        CTN file_metadata
+            TEST all all
+            STATE_REF trusted_installer_owned
+            OBJECT_REF ntoskrnl
+            OBJECT_REF hal
+            OBJECT_REF win32k
+        CTN_END
+    CRI_END
+DEF_END
